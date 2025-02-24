@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from riotwatcher import TftWatcher, RiotWatcher
 from discord.ext import commands
+from pathlib import Path
 
 load_dotenv()
 api_key = str(os.getenv('RIOT'))
@@ -34,6 +35,10 @@ class Remove(commands.Cog):
         if riot_id in data['riot_id'].values:
             data = data[data['riot_id'] != riot_id]
             data.to_csv("./tft_data.csv", index=False, float_format='%.0f')
+            
+            file = Path("./" + riot_id + ".csv")
+            if os.path.exists(file):
+                os.remove(file)
             
             print(f'Removed {name}')
             await ctx.respond(f'Removed user {name}#{tag}')
