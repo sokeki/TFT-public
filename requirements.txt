@@ -1,0 +1,5 @@
+py-cord==2.6.1
+numpy==2.2.3
+pandas==2.2.3
+python-dotenv==1.0.1
+riotwatcher==3.3.0
