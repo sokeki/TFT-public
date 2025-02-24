@@ -19,11 +19,11 @@ class List(commands.Cog):
     @discord.slash_command(name="list", description="Show account leaderboard")
     async def show_leaderboard(self, ctx: discord.ApplicationContext):
         data = pd.read_csv('./tft_data.csv')
-        data = data.sort_values('lp', ascending=False)
+        data = data.sort_values('lp', ascending=False).reset_index(drop=True)
 
         embed = discord.Embed(color=discord.Colour.green())
         embed.set_author(name="Current TFT Rankings")
-
+        
         for i, row in data.iterrows():
             user = row['name']
             lp_total = row['lp']
