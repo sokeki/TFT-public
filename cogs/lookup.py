@@ -150,7 +150,11 @@ class Lookup(commands.Cog):
                                     tactician_url = tactician_url.replace("/lol-game-data/assets/ASSETS/Loadouts/Companions/", "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/")
                                     tactician_url = tactician_url.lower()
                                     embed.set_thumbnail(url=tactician_url)
-                                    await message.edit(embed=embed)  
+                                    try:
+                                        await message.edit(embed=embed)
+                                    except:
+                                        embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png")
+                                        await message.edit(embed=embed)  
                                     print("edited message")
                                 else:
                                     me = tft_watcher.summoner.by_puuid(region, riot_id)
