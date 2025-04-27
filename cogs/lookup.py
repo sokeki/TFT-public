@@ -4,7 +4,6 @@ from discord.ext import tasks
 import os
 from dotenv import load_dotenv
 from riotwatcher import TftWatcher, RiotWatcher
-import numpy as np
 import urllib
 from discord.ext import commands
 import pymongo
