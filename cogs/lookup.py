@@ -205,69 +205,69 @@ class Lookup(commands.Cog):
                                         )
                                         await message.edit(embed=embed)
                                     print("edited message")
-                                else:
-                                    me = tft_watcher.summoner.by_puuid(region, riot_id)
-                                    stats = tft_watcher.league.by_summoner(
-                                        region, me["id"]
-                                    )
-                                    tier = stats[j]["tier"]
-                                    tier = tier.lower()
-                                    tier = tier.capitalize()
-                                    str_rank = (
-                                        tier
-                                        + " "
-                                        + stats[j]["rank"]
-                                        + " "
-                                        + str(stats[j]["leaguePoints"])
-                                        + "LP"
-                                    )
-                                    embed = discord.Embed(
-                                        title=data.iloc[i]["name"]
-                                        + " has just lost a game",
-                                        description=f"Currently {str_rank}, -0LP",
-                                        color=discord.Colour.red(),
-                                    )
-                                    embed.add_field(name="", value="", inline=False)
-                                    embed.add_field(
-                                        name="Placement",
-                                        value=str(placement),
-                                        inline=True,
-                                    )
-                                    embed.add_field(
-                                        name="Players killed",
-                                        value=str(eliminations),
-                                        inline=True,
-                                    )
-                                    embed.add_field(name="", value="", inline=False)
-                                    embed.add_field(
-                                        name="Damage dealt",
-                                        value=str(player_damage),
-                                        inline=True,
-                                    )
-                                    embed.add_field(
-                                        name="End level", value=str(level), inline=True
-                                    )
-                                    request = urllib.request.Request(url, None, headers)
-                                    companions = urllib.request.urlopen(request)
-                                    tactician_df = pd.read_json(companions)
-                                    tactician = tactician_df.loc[
-                                        tactician_df["itemId"] == tactician_id
-                                    ]
-                                    tactician_url = tactician.iloc[0]["loadoutsIcon"]
-                                    tactician_url = tactician_url.replace(
-                                        "/lol-game-data/assets/ASSETS/Loadouts/Companions/",
-                                        "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/",
-                                    )
-                                    tactician_url = tactician_url.lower()
-                                    embed.set_thumbnail(url=tactician_url)
-                                    message = await channel.send(embed=embed)
-                                    collection_name = dbname["users"]
-                                    query = {"_id": riot_id}
-                                    newmessage = {
-                                        "$set": {"last_message": str(message.id)}
-                                    }
-                                    collection_name.update_one(query, newmessage)
-                                    print("sent message")
+                            else:
+                                print("prepping new message..")
+                                me = tft_watcher.summoner.by_puuid(region, riot_id)
+                                stats = tft_watcher.league.by_summoner(region, me["id"])
+                                for j in range(len(stats)):
+                                    queueType = stats[j]["queueType"]
+                                    if queueType == "RANKED_TFT":
+                                        str_rank = (
+                                            tier
+                                            + " "
+                                            + stats[j]["rank"]
+                                            + " "
+                                            + str(stats[j]["leaguePoints"])
+                                            + "LP"
+                                        )
+                                        tier = stats[j]["tier"]
+                                        tier = tier.lower()
+                                        tier = tier.capitalize()
+                                embed = discord.Embed(
+                                    title=data.iloc[i]["name"]
+                                    + " has just lost a game",
+                                    description=f"Currently {str_rank}, -0LP",
+                                    color=discord.Colour.red(),
+                                )
+                                embed.add_field(name="", value="", inline=False)
+                                embed.add_field(
+                                    name="Placement",
+                                    value=str(placement),
+                                    inline=True,
+                                )
+                                embed.add_field(
+                                    name="Players killed",
+                                    value=str(eliminations),
+                                    inline=True,
+                                )
+                                embed.add_field(name="", value="", inline=False)
+                                embed.add_field(
+                                    name="Damage dealt",
+                                    value=str(player_damage),
+                                    inline=True,
+                                )
+                                embed.add_field(
+                                    name="End level", value=str(level), inline=True
+                                )
+                                request = urllib.request.Request(url, None, headers)
+                                companions = urllib.request.urlopen(request)
+                                tactician_df = pd.read_json(companions)
+                                tactician = tactician_df.loc[
+                                    tactician_df["itemId"] == tactician_id
+                                ]
+                                tactician_url = tactician.iloc[0]["loadoutsIcon"]
+                                tactician_url = tactician_url.replace(
+                                    "/lol-game-data/assets/ASSETS/Loadouts/Companions/",
+                                    "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/",
+                                )
+                                tactician_url = tactician_url.lower()
+                                embed.set_thumbnail(url=tactician_url)
+                                message = await channel.send(embed=embed)
+                                collection_name = dbname["users"]
+                                query = {"_id": riot_id}
+                                newmessage = {"$set": {"last_message": str(message.id)}}
+                                collection_name.update_one(query, newmessage)
+                                print("sent message")
             except pymongo.errors.OperationFailure:  # If the collection doesn't exist
                 print("this collection doesn't exist")
                 print("fetching match data...")
