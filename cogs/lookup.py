@@ -84,7 +84,7 @@ class Lookup(commands.Cog):
             if data.iloc[i]["lp"] < lp:
                 lp_diff = lp - data.iloc[i]["lp"]
                 query = {"_id": riot_id}
-                newvalues = {"$set": {"lp": [lp]}}
+                newvalues = {"$set": {"lp": lp}}
                 collection_name.update_one(query, newvalues)
                 embed = discord.Embed(
                     title=data.iloc[i]["name"] + " has just won a game",
@@ -102,7 +102,7 @@ class Lookup(commands.Cog):
             elif data.iloc[i]["lp"] > lp:
                 lp_diff = data.iloc[i]["lp"] - lp
                 query = {"_id": riot_id}
-                newvalues = {"$set": {"lp": [lp]}}
+                newvalues = {"$set": {"lp": lp}}
                 collection_name.update_one(query, newvalues)
                 embed = discord.Embed(
                     title=data.iloc[i]["name"] + " has just lost a game",
@@ -204,6 +204,10 @@ class Lookup(commands.Cog):
                                         )
                                         await message.edit(embed=embed)
                                     print("edited message")
+                                    collection_name = dbname["users"]
+                                    query = {"_id": riot_id}
+                                    newmessage = {"$set": {"last_message": ""}}
+                                    collection_name.update_one(query, newmessage)
                             else:
                                 print("prepping new message..")
                                 me = tft_watcher.summoner.by_puuid(region, riot_id)
@@ -222,12 +226,20 @@ class Lookup(commands.Cog):
                                         tier = stats[j]["tier"]
                                         tier = tier.lower()
                                         tier = tier.capitalize()
-                                embed = discord.Embed(
-                                    title=data.iloc[i]["name"]
-                                    + " has just lost a game",
-                                    description=f"Currently {str_rank}, -0LP",
-                                    color=discord.Colour.red(),
-                                )
+                                if placement < 5:
+                                    embed = discord.Embed(
+                                        title=data.iloc[i]["name"]
+                                        + " has just won a game",
+                                        description=f"Currently {str_rank}, +0LP (placement game)",
+                                        color=discord.Colour.green(),
+                                    )
+                                else:
+                                    embed = discord.Embed(
+                                        title=data.iloc[i]["name"]
+                                        + " has just lost a game",
+                                        description=f"Currently {str_rank}, -0LP",
+                                        color=discord.Colour.red(),
+                                    )
                                 embed.add_field(name="", value="", inline=False)
                                 embed.add_field(
                                     name="Placement",
@@ -262,10 +274,6 @@ class Lookup(commands.Cog):
                                 tactician_url = tactician_url.lower()
                                 embed.set_thumbnail(url=tactician_url)
                                 message = await channel.send(embed=embed)
-                                collection_name = dbname["users"]
-                                query = {"_id": riot_id}
-                                newmessage = {"$set": {"last_message": str(message.id)}}
-                                collection_name.update_one(query, newmessage)
                                 print("sent message")
             except pymongo.errors.OperationFailure:  # If the collection doesn't exist
                 print("this collection doesn't exist")
