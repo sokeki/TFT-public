@@ -270,7 +270,7 @@ class Lookup(commands.Cog):
                                     collection_name.update_one(query, newmessage)
                                     print("sent message")
             except pymongo.errors.OperationFailure:  # If the collection doesn't exist
-                print("This collection doesn't exist")
+                print("this collection doesn't exist")
                 print("fetching match data...")
                 collection_name = dbname[riot_id]
                 for match_id in new_match_list:
@@ -290,7 +290,7 @@ class Lookup(commands.Cog):
                             "damage_dealt": [player_damage],
                             "level": [level],
                             "tactician_id": [tactician_id],
-                            "message_id": "",
+                            "message_id": [""],
                         }
                         collection_name.insert_one(info)
                 print("written to file")
