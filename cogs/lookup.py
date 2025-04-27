@@ -156,7 +156,7 @@ class Lookup(commands.Cog):
                             }
                             collection_name.insert_one(info)
                             print("added to match list...")
-                            if message_id != np.nan:
+                            if message_id != "":
                                 message_id = message_id.replace("'", "")
                                 message = await channel.fetch_message(message_id)
                                 embed = message.embeds[0]
