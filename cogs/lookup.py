@@ -226,6 +226,9 @@ class Lookup(commands.Cog):
                                         tier = stats[j]["tier"]
                                         tier = tier.lower()
                                         tier = tier.capitalize()
+                                        if tier == "":
+                                            str_rank = "Unranked"
+
                                 if placement < 5:
                                     embed = discord.Embed(
                                         title=data.iloc[i]["name"]
