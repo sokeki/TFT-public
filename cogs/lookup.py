@@ -147,13 +147,13 @@ class Lookup(commands.Cog):
                             user_info = users.loc[users["riot_id"] == riot_id]
                             message_id = user_info.iloc[0]["latest_message"]
                             info = {
-                                "match_id": [match_id],
-                                "placement": [placement],
-                                "eliminations": [eliminations],
-                                "damage_dealt": [player_damage],
-                                "level": [level],
-                                "tactician_id": [tactician_id],
-                                "message_id": [message_id],
+                                "match_id": match_id,
+                                "placement": int(placement),
+                                "eliminations": int(eliminations),
+                                "damage_dealt": int(player_damage),
+                                "level": int(level),
+                                "tactician_id": int(tactician_id),
+                                "message_id": message_id,
                             }
                             collection_name.insert_one(info)
                             print("added to match list...")
@@ -284,13 +284,13 @@ class Lookup(commands.Cog):
                         level = player_stats.iloc[0]["level"]
                         tactician_id = player_stats.iloc[0]["companion.item_ID"]
                         info = {
-                            "match_id": [match_id],
-                            "placement": [placement],
-                            "eliminations": [eliminations],
-                            "damage_dealt": [player_damage],
-                            "level": [level],
-                            "tactician_id": [tactician_id],
-                            "message_id": [""],
+                            "match_id": match_id,
+                            "placement": int(placement),
+                            "eliminations": int(eliminations),
+                            "damage_dealt": int(player_damage),
+                            "level": int(level),
+                            "tactician_id": int(tactician_id),
+                            "message_id": "",
                         }
                         collection_name.insert_one(info)
                 print("written to file")

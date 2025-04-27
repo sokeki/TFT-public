@@ -45,9 +45,6 @@ class Remove(commands.Cog):
             return
 
         if riot_id in data["_id"].values:
-            data = data[data["_id"] != riot_id]
-            data.to_csv("./tft_data.csv", index=False, float_format="%.0f")
-
             query = {"_id": riot_id}
             collection_name.delete_one(query)
 

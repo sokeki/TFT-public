@@ -53,12 +53,12 @@ class Add(commands.Cog):
         )
 
         info = {
-            "_id": [riot_id],
-            "summ_id": [me["id"]],
-            "name": [name],
-            "tag": [tag],
-            "lp": [lp],
-            "region": [region],
+            "_id": riot_id,
+            "summ_id": me["id"],
+            "name": name,
+            "tag": tag,
+            "lp": lp,
+            "region": region,
             "last_message": "",
         }
         collection_name.insert_one(info)
