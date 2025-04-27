@@ -4,6 +4,8 @@ import os
 from dotenv import load_dotenv
 from riotwatcher import TftWatcher, RiotWatcher
 from discord.ext import commands
+from pymongo_get_database import get_database
+dbname = get_database()
 
 load_dotenv()
 api_key = str(os.getenv('RIOT'))
@@ -18,7 +20,9 @@ class List(commands.Cog):
 
     @discord.slash_command(name="list", description="Show account leaderboard")
     async def show_leaderboard(self, ctx: discord.ApplicationContext):
-        data = pd.read_csv('./tft_data.csv')
+        collection_name = dbname["users"]
+        data_raw = collection_name.find()
+        data = pd.DataFrame(data_raw)
         data = data.sort_values('lp', ascending=False).reset_index(drop=True)
 
         embed = discord.Embed(color=discord.Colour.green())
