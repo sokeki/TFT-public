@@ -5,7 +5,6 @@ import os
 from dotenv import load_dotenv
 from riotwatcher import TftWatcher, RiotWatcher
 from discord.ext import commands
-from pathlib import Path
 from pymongo_get_database import get_database
 
 dbname = get_database()
@@ -27,7 +26,7 @@ class Remove(commands.Cog):
     @option(
         "region", description="Summoner region", required=True, choices=["EUW1", "NA1"]
     )
-    async def stats(
+    async def remove(
         self, ctx: discord.ApplicationContext, name: str, tag: str, region: str
     ):
         collection_name = dbname["users"]
@@ -38,7 +37,7 @@ class Remove(commands.Cog):
         try:
             account = riot_watcher.account.by_riot_id(riot_region, name, tag)
             riot_id = account["puuid"]
-        except Exception as e:
+        except Exception:
             await ctx.respond(
                 "Error fetching account details. Please check the provided information."
             )

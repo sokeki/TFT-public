@@ -28,7 +28,7 @@ class Add(commands.Cog):
     @option(
         "region", description="Summoner region", required=True, choices=["euw1", "na1"]
     )
-    async def stats(
+    async def add(
         self, ctx: discord.ApplicationContext, name: str, tag: str, region: str
     ):
         collection_name = dbname["users"]

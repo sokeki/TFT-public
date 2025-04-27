@@ -4,7 +4,6 @@ from discord.ext import tasks
 import os
 from dotenv import load_dotenv
 from riotwatcher import TftWatcher, RiotWatcher
-from pathlib import Path
 import numpy as np
 import urllib
 from discord.ext import commands
@@ -200,7 +199,7 @@ class Lookup(commands.Cog):
                                     embed.set_thumbnail(url=tactician_url)
                                     try:
                                         await message.edit(embed=embed)
-                                    except:
+                                    except Exception:
                                         embed.set_thumbnail(
                                             url="https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
                                         )

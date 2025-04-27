@@ -23,7 +23,9 @@ class Stats(commands.Cog):
     @option(
         "region", description="Summoner region", required=True, choices=["EUW1", "NA1"]
     )
-    async def stats(ctx: discord.ApplicationContext, name: str, tag: str, region: str):
+    async def stats(
+        self, ctx: discord.ApplicationContext, name: str, tag: str, region: str
+    ):
         riot_region = "EUROPE" if region == "EUW1" else "AMERICAS"
         account = riot_watcher.account.by_riot_id(riot_region, name, tag)
         me = tft_watcher.summoner.by_puuid(region, account["puuid"])
