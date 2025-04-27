@@ -97,7 +97,7 @@ class Lookup(commands.Cog):
                     name="Placement", value="Placement pending...", inline=True
                 )
                 message = await channel.send(embed=embed)
-                newmessage = {"$set": {"last_message": [str(message.id)]}}
+                newmessage = {"$set": {"last_message": str(message.id)}}
                 collection_name.update_one(query, newmessage)
 
             elif data.iloc[i]["lp"] > lp:
@@ -115,7 +115,7 @@ class Lookup(commands.Cog):
                     name="Placement", value="Placement pending...", inline=True
                 )
                 message = await channel.send(embed=embed)
-                newmessage = {"$set": {"last_message": [str(message.id)]}}
+                newmessage = {"$set": {"last_message": str(message.id)}}
                 collection_name.update_one(query, newmessage)
 
         print("checking matches...")
@@ -144,7 +144,7 @@ class Lookup(commands.Cog):
                             level = player_stats.iloc[0]["level"]
                             tactician_id = player_stats.iloc[0]["companion.item_ID"]
                             user_info = users.loc[users["_id"] == riot_id]
-                            message_id = user_info.iloc[0]["latest_message"]
+                            message_id = user_info.iloc[0]["last_message"]
                             info = {
                                 "match_id": match_id,
                                 "placement": int(placement),
@@ -264,7 +264,7 @@ class Lookup(commands.Cog):
                                     collection_name = dbname["users"]
                                     query = {"_id": riot_id}
                                     newmessage = {
-                                        "$set": {"last_message": [str(message.id)]}
+                                        "$set": {"last_message": str(message.id)}
                                     }
                                     collection_name.update_one(query, newmessage)
                                     print("sent message")
