@@ -118,6 +118,9 @@ class Lookup(commands.Cog):
                 collection_name.update_one(query, newmessage)
 
         print("checking matches...")
+        collection_name = dbname["users"]
+        data_raw = collection_name.find()
+        data = pd.DataFrame(data_raw)
         users = data
         for i in range(len(users)):
             riot_id = users.iloc[i]["_id"]
