@@ -19,15 +19,15 @@ async def on_ready():
         activity=discord.Activity(type=discord.ActivityType.watching, name="your LP"),
     )
 
-    lookup_cog = bot.get_cog("Lookup")
-    if lookup_cog and not lookup_cog.lookup.is_running():
-        lookup_cog.lookup.start()
-        print("Lookup loop started")
-
     id_cog = bot.get_cog("Ids")
     if id_cog and not id_cog.ids.is_running():
         id_cog.ids.start()
         print("Id check loop started")
+
+    lookup_cog = bot.get_cog("Lookup")
+    if lookup_cog and not lookup_cog.lookup.is_running():
+        lookup_cog.lookup.start()
+        print("Lookup loop started")
 
 
 bot.run(os.getenv("TOKEN"))
