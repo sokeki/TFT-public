@@ -58,3 +58,7 @@ class Ids(commands.Cog):
                 new_values = {"$set": {"tag": new_tag}}
                 collection_name.update(query, new_values)
                 print("Updated name and tag")
+
+
+def setup(bot):
+    bot.add_cog(Ids(bot))
