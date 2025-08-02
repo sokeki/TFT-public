@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 bot = discord.Bot()
 
-cogs_list = ["add", "list", "lookup", "remove", "stats"]
+cogs_list = ["add", "list", "lookup", "remove", "stats", "ids"]
 
 for cog in cogs_list:
     bot.load_extension(f"cogs.{cog}")
