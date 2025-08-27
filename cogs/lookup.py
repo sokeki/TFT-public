@@ -47,7 +47,7 @@ class Lookup(commands.Cog):
 
         for i, user in users.iterrows():
             riot_id = user["_id"]
-            region = "EUROPE" if user["region"] == "euw1" else "AMERICAS"
+            region = "europe" if user["region"] == "euw1" else "americas"
 
             try:
                 summoner = await self.bot.riot.get_summoner(
@@ -125,7 +125,7 @@ class Lookup(commands.Cog):
     # Update matches and edit embeds
     # --------------------------
     async def update_matches(self):
-        print("Updating matches")
+        print("Updating Matches")
         collection_users = dbname["users"]
         users = pd.DataFrame(collection_users.find())
         channel = self.bot.get_channel(USER_CHANNEL_ID)
@@ -133,7 +133,8 @@ class Lookup(commands.Cog):
 
         for i, user in users.iterrows():
             riot_id = user["_id"]
-            region = "EUROPE" if user["region"] == "euw1" else "AMERICAS"
+            print(riot_id)
+            region = "europe" if user["region"] == "euw1" else "americas"
             try:
                 match_ids = await self.bot.riot.get_match_ids(region, riot_id, count=5)
             except Exception:
@@ -148,6 +149,8 @@ class Lookup(commands.Cog):
 
                 try:
                     match_data = await self.bot.riot.get_match(region, match_id)
+                    if match_data["info"]["tft_game_type"] != "standard":
+                        continue
                 except Exception:
                     continue
 

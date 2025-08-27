@@ -10,10 +10,14 @@ class Stats(commands.Cog):
 
     @discord.slash_command(name="stats", description="Pull player stats")
     @option("name", description="Summoner name", required=True)
+    @option("tag", description="Tag", required=True)
     @option("region", description="Region", required=True, choices=["euw1", "na1"])
-    async def stats(self, ctx: discord.ApplicationContext, name: str, region: str):
+    async def stats(
+        self, ctx: discord.ApplicationContext, name: str, tag: str, region: str
+    ):
         try:
-            summoner = await self.bot.riot.get_summoner(region, name)
+            region2 = "europe" if region == "euw1" else "americas"
+            summoner = await self.bot.riot.get_summoner(region2, tag, name)
             riot_id = summoner["puuid"]
             stats = await self.bot.riot.get_league_entries(region, riot_id)
         except Exception:

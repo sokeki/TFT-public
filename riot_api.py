@@ -24,9 +24,9 @@ class RiotAPI:
             resp.raise_for_status()
             return await resp.json()
 
-    async def get_summoner(self, region: str, name: str):
+    async def get_summoner(self, region: str, tag: str, name: str):
         """Get summoner info by name."""
-        url = f"https://{region}.api.riotgames.com/tft/summoner/v1/summoners/by-name/{name}"
+        url = f"https://{region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{name}/{tag}"
         return await self.request(url)
 
     async def get_league_entries(self, region: str, puuid: str):
@@ -36,12 +36,12 @@ class RiotAPI:
 
     async def get_match_ids(self, routing: str, puuid: str, count: int = 20):
         """Get match IDs for a player."""
-        url = f"https://{routing}.api.riotgames.com/tft/matches/by-puuid/{puuid}/ids"
+        url = f"https://{routing}.api.riotgames.com/tft/match/v1/matches/by-puuid/{puuid}/ids"
         return await self.request(url, params={"count": count})
 
     async def get_match(self, routing: str, match_id: str):
         """Get full match info by match ID."""
-        url = f"https://{routing}.api.riotgames.com/tft/matches/{match_id}"
+        url = f"https://{routing}.api.riotgames.com/tft/match/v1/matches/{match_id}"
         return await self.request(url)
 
     async def close(self):

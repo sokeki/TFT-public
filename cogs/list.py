@@ -38,12 +38,12 @@ class List(commands.Cog):
         tier_points = lp_total - (lp_total % 100)
         rank_num = tier_points % 400
         tier_mapping = {
-            0: "Bronze",
-            1: "Silver",
-            2: "Gold",
-            3: "Platinum",
-            4: "Emerald",
-            5: "Diamond",
+            0: "Iron",
+            1: "Bronze",
+            2: "Silver",
+            3: "Gold",
+            4: "Plat",
+            5: "Emerald",
         }
         tier = tier_mapping.get(tier_points // 400, "Iron")
         rank_mapping = {0: "IV", 100: "III", 200: "II", 300: "I"}
