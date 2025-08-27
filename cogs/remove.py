@@ -1,19 +1,11 @@
+# remove.py
 import discord
-import pandas as pd
 from discord import option
-import os
-from dotenv import load_dotenv
-from riotwatcher import TftWatcher, RiotWatcher
 from discord.ext import commands
+import pandas as pd
 from pymongo_get_database import get_database
 
 dbname = get_database()
-
-load_dotenv()
-api_key = str(os.getenv("RIOT"))
-tft_watcher = TftWatcher(api_key)
-riot_watcher = RiotWatcher(api_key)
-pd.set_option("display.float_format", "{:.0f}".format)
 
 
 class Remove(commands.Cog):
@@ -22,38 +14,29 @@ class Remove(commands.Cog):
 
     @discord.slash_command(name="remove", description="Remove a tracked account")
     @option("name", description="Summoner name", required=True)
-    @option("tag", description="The part that comes after the #", required=True)
-    @option(
-        "region", description="Summoner region", required=True, choices=["EUW1", "NA1"]
-    )
-    async def remove(
-        self, ctx: discord.ApplicationContext, name: str, tag: str, region: str
-    ):
-        collection_name = dbname["users"]
-        data_raw = collection_name.find()
-        data = pd.DataFrame(data_raw)
-        riot_region = "EUROPE" if region == "EUW1" else "AMERICAS"
+    @option("region", description="Region", required=True, choices=["euw1", "na1"])
+    async def remove(self, ctx: discord.ApplicationContext, name: str, region: str):
+        collection = dbname["users"]
+        users = pd.DataFrame(collection.find())
 
         try:
-            account = riot_watcher.account.by_riot_id(riot_region, name, tag)
-            riot_id = account["puuid"]
+            summoner = await self.bot.riot.get_summoner(region, name)
+            riot_id = summoner["puuid"]
         except Exception:
-            await ctx.respond(
-                "Error fetching account details. Please check the provided information."
-            )
+            await ctx.respond("Could not fetch summoner. Check the name and region.")
             return
 
-        if riot_id in data["_id"].values:
-            query = {"_id": riot_id}
-            collection_name.delete_one(query)
+        if riot_id not in users["_id"].values:
+            await ctx.respond("User is not currently tracked.")
+            return
 
-            collection_name = dbname[riot_id]
-            collection_name.drop()
+        # Remove from main users collection
+        collection.delete_one({"_id": riot_id})
 
-            print(f"Removed {name}")
-            await ctx.respond(f"Removed user {name}#{tag}")
-        else:
-            await ctx.respond("User is not currently tracked")
+        # Drop match collection
+        dbname[riot_id].drop()
+
+        await ctx.respond(f"Removed {name} from tracking.")
 
 
 def setup(bot):

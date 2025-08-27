@@ -1,18 +1,10 @@
+# list.py
 import discord
-import pandas as pd
-import os
-from dotenv import load_dotenv
-from riotwatcher import TftWatcher, RiotWatcher
 from discord.ext import commands
+import pandas as pd
 from pymongo_get_database import get_database
 
 dbname = get_database()
-
-load_dotenv()
-api_key = str(os.getenv("RIOT"))
-tft_watcher = TftWatcher(api_key)
-riot_watcher = RiotWatcher(api_key)
-
 pd.set_option("display.float_format", "{:.0f}".format)
 
 
@@ -22,47 +14,41 @@ class List(commands.Cog):
 
     @discord.slash_command(name="list", description="Show account leaderboard")
     async def show_leaderboard(self, ctx: discord.ApplicationContext):
-        collection_name = dbname["users"]
-        data_raw = collection_name.find()
-        data = pd.DataFrame(data_raw)
-        data = data.sort_values("lp", ascending=False).reset_index(drop=True)
+        collection = dbname["users"]
+        users = (
+            pd.DataFrame(collection.find())
+            .sort_values("lp", ascending=False)
+            .reset_index(drop=True)
+        )
 
         embed = discord.Embed(color=discord.Colour.green())
         embed.set_author(name="Current TFT Rankings")
 
-        for i, row in data.iterrows():
+        for i, row in users.iterrows():
             user = row["name"]
-            lp_total = row["lp"]
-            str_rank = self.calculate_rank(lp_total)
+            lp = row["lp"]
+            str_rank = self.calculate_rank(lp)
+            embed.add_field(name=f"{i+1}. {user}", value=str_rank, inline=False)
 
-            user_rank = f"{i + 1}. {user}"
-            embed.add_field(name=user_rank, value=str_rank, inline=False)
-
-        print("Output current leaderboard")
         await ctx.respond(embed=embed)
 
     def calculate_rank(self, lp_total):
         if lp_total == 0:
             return "Unranked"
-
-        lp = lp_total % 100
-        tier_points = lp_total - lp
+        tier_points = lp_total - (lp_total % 100)
         rank_num = tier_points % 400
-
+        tier_mapping = {
+            0: "Bronze",
+            1: "Silver",
+            2: "Gold",
+            3: "Platinum",
+            4: "Emerald",
+            5: "Diamond",
+        }
+        tier = tier_mapping.get(tier_points // 400, "Iron")
         rank_mapping = {0: "IV", 100: "III", 200: "II", 300: "I"}
         rank = rank_mapping.get(rank_num, "")
-
-        tier_mapping = {
-            1: "Bronze",
-            2: "Silver",
-            3: "Gold",
-            4: "Platinum",
-            5: "Emerald",
-            6: "Diamond",
-        }
-        tier_num = tier_points // 400
-        tier = tier_mapping.get(tier_num, "Iron")
-
+        lp = lp_total % 100
         return f"{tier} {rank} {lp}LP"
 
 
