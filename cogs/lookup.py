@@ -133,7 +133,7 @@ class Lookup(commands.Cog):
 
         for i, user in users.iterrows():
             riot_id = user["_id"]
-            region = user["region"]
+            region = "EUROPE" if user["region"] == "euw1" else "AMERICAS"
             try:
                 match_ids = await self.bot.riot.get_match_ids(region, riot_id, count=5)
             except Exception:
