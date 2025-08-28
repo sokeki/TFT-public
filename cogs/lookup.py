@@ -303,9 +303,8 @@ class Lookup(commands.Cog):
                         embed.set_thumbnail(url=fallback)
                         print(f"Skipped invalid thumbnail URL: {url}")
 
-                    msg = await channel.send(embed=embed)
                     collection_users.update_one(
-                        {"_id": riot_id}, {"$set": {"last_message": str(msg.id)}}
+                        {"_id": riot_id}, {"$set": {"last_message": ""}}
                     )
                     print("Printed message.")
 
