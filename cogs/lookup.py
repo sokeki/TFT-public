@@ -41,7 +41,7 @@ class Lookup(commands.Cog):
     # Update summoner names/tags
     # --------------------------
     async def update_names_and_tags(self):
-        print("Updating Data")
+        print("Updating MongoDB...")
         collection = dbname["users"]
         users = pd.DataFrame(collection.find())
 
@@ -51,7 +51,7 @@ class Lookup(commands.Cog):
 
             try:
                 summoner = await self.bot.riot.get_summoner(
-                    user["region"], user["name"]
+                    region, user["tag"], user["name"]
                 )
                 new_name = summoner["name"]
                 new_tag = summoner.get("tagLine", "")
@@ -68,7 +68,7 @@ class Lookup(commands.Cog):
     # Update LP and ranks
     # --------------------------
     async def update_ranks(self):
-        print("Updating Ranks")
+        print("Updating ranks...")
         collection = dbname["users"]
         users = pd.DataFrame(collection.find())
         channel = self.bot.get_channel(USER_CHANNEL_ID)
@@ -125,7 +125,7 @@ class Lookup(commands.Cog):
     # Update matches and edit embeds
     # --------------------------
     async def update_matches(self):
-        print("Updating Matches")
+        print("Updating matches...")
         collection_users = dbname["users"]
         users = pd.DataFrame(collection_users.find())
         channel = self.bot.get_channel(USER_CHANNEL_ID)
@@ -133,7 +133,6 @@ class Lookup(commands.Cog):
 
         for i, user in users.iterrows():
             riot_id = user["_id"]
-            print(riot_id)
             region = "europe" if user["region"] == "euw1" else "americas"
             try:
                 match_ids = await self.bot.riot.get_match_ids(region, riot_id, count=5)
@@ -153,6 +152,7 @@ class Lookup(commands.Cog):
                 except Exception:
                     continue
 
+                print("New match data found...")
                 participants = match_data["info"]["participants"]
                 player = next((p for p in participants if p["puuid"] == riot_id), None)
                 if not player:
@@ -193,6 +193,7 @@ class Lookup(commands.Cog):
                         message = await channel.fetch_message(int(last_msg_id))
                         embed = message.embeds[0].to_dict()
                         embed_fields = embed.get("fields", [])
+                        print("Updating message...")
 
                         # Update placement
                         for field in embed_fields:
@@ -217,6 +218,7 @@ class Lookup(commands.Cog):
                         embed["thumbnail"] = {"url": url}
 
                         await message.edit(embed=discord.Embed.from_dict(embed))
+                        print("Edited message.")
 
                         collection_users.update_one(
                             {"_id": riot_id}, {"$set": {"last_message": ""}}
@@ -226,6 +228,7 @@ class Lookup(commands.Cog):
 
                 # ELSE: send a brand new message
                 else:
+                    print("Printing new message...")
                     color = (
                         discord.Colour.green()
                         if placement < 5
@@ -246,6 +249,7 @@ class Lookup(commands.Cog):
                     collection_users.update_one(
                         {"_id": riot_id}, {"$set": {"last_message": str(msg.id)}}
                     )
+                    print("Printed message.")
 
 
 def setup(bot):
