@@ -38,7 +38,8 @@ async def on_ready():
 
     print(f"{bot.user} is ready!")
     await bot.change_presence(
-        status=discord.Status.online, activity=discord.Watching("your LP")
+        status=discord.Status.online,
+        activity=discord.Activity(type=discord.ActivityType.watching, name="your LP"),
     )
 
 
