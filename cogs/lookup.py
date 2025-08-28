@@ -199,6 +199,7 @@ class Lookup(commands.Cog):
                         "/lol-game-data/assets/ASSETS/Loadouts/Companions/",
                         "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/",
                     )
+                    url = url.lower()
                 else:
                     url = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
 
