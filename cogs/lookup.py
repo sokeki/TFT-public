@@ -306,7 +306,7 @@ class Lookup(commands.Cog):
                         print(f"Skipped invalid thumbnail URL: {url}")
 
                     collection_users.update_one(
-                        {"_id": riot_id}, {"$set": {"last_message": ""}}
+                        {"_id": user["riot_id"]}, {"$set": {"last_message": ""}}
                     )
                     print("Printed message.")
 
