@@ -285,7 +285,9 @@ class Lookup(commands.Cog):
                             str_rank = f"{stat['tier'].capitalize()} {stat['rank']} {stat['leaguePoints']}LP"
 
                     lp_diff = lp - user["lp"]
-                    collection_users.update_one({"_id": riot_id}, {"$set": {"lp": lp}})
+                    collection_users.update_one(
+                        {"_id": user["riot_id"]}, {"$set": {"lp": lp}}
+                    )
 
                     desc = f"Currently {str_rank}, {lp_diff}LP"
 
