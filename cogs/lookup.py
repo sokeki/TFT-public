@@ -287,7 +287,7 @@ class Lookup(commands.Cog):
                     lp_diff = lp - user["lp"]
                     collection_users.update_one({"_id": riot_id}, {"$set": {"lp": lp}})
 
-                    desc = f"Currently {str_rank}, {lp_diff}LP"
+                    desc = f"Currently {str_rank}, gained {lp_diff}LP"
 
                     embed = discord.Embed(title=title, description=desc, color=color)
                     embed.add_field(name="Placement", value=str(placement), inline=True)
