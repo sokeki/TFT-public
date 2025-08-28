@@ -117,6 +117,7 @@ class Lookup(commands.Cog):
                     str_rank = f"{stat['tier'].capitalize()} {stat['rank']} {stat['leaguePoints']}LP"
 
             if user["lp"] != lp:
+                print("lp change detected!")
                 lp_diff = lp - user["lp"]
                 collection.update_one({"_id": riot_id}, {"$set": {"lp": lp}})
 
@@ -129,12 +130,15 @@ class Lookup(commands.Cog):
                     title = f"{user['name']} has just lost a game"
                     desc = f"Currently {str_rank}, {lp_diff}LP"
 
+                print("Printing lp message...")
+
                 embed = discord.Embed(title=title, description=desc, color=color)
                 embed.add_field(name="Placement", value="Pending...", inline=True)
                 msg = await channel.send(embed=embed)
                 collection.update_one(
                     {"_id": riot_id}, {"$set": {"last_message": str(msg.id)}}
                 )
+                print("Sent rank update.")
 
     # --------------------------
     # Update matches and edit embeds
@@ -257,9 +261,36 @@ class Lookup(commands.Cog):
                         else discord.Colour.red()
                     )
                     title = f"{user['name']} has just {'won' if placement < 5 else 'lost'} a game"
-                    desc = f"Placement: {placement}"
+                    lp = 0
+                    str_rank = "Unranked"
+                    tier_mapping = {
+                        "BRONZE": 400,
+                        "SILVER": 800,
+                        "GOLD": 1200,
+                        "PLATINUM": 1600,
+                        "EMERALD": 2000,
+                        "DIAMOND": 2400,
+                    }
+                    rank_mapping = {"III": 100, "II": 200, "I": 300}
+
+                    stats = await self.bot.riot.get_league_entries(
+                        user["region"], user["riot_id"]
+                    )
+
+                    for stat in stats:
+                        if stat["queueType"] == "RANKED_TFT":
+                            lp += tier_mapping.get(stat["tier"], 0)
+                            lp += rank_mapping.get(stat["rank"], 0)
+                            lp += stat["leaguePoints"]
+                            str_rank = f"{stat['tier'].capitalize()} {stat['rank']} {stat['leaguePoints']}LP"
+
+                    lp_diff = lp - user["lp"]
+                    collection_users.update_one({"_id": riot_id}, {"$set": {"lp": lp}})
+
+                    desc = f"Currently {str_rank}, {lp_diff}LP"
 
                     embed = discord.Embed(title=title, description=desc, color=color)
+                    embed.add_field(name="Placement", value=str(placement), inline=True)
                     embed.add_field(
                         name="Players killed", value=str(eliminations), inline=True
                     )
