@@ -6,12 +6,27 @@ from pymongo_get_database import get_database
 import urllib.request
 import asyncio
 import json
+import aiohttp
 
 dbname = get_database()
 pd.set_option("display.float_format", "{:.0f}".format)
 
 USER_CHANNEL_ID = 1284900822773141514
 COMPANIONS_URL = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/companions.json"
+
+
+async def url_exists(url: str) -> bool:
+    """Check if a URL exists by making a HEAD request."""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.head(url, allow_redirects=True) as resp:
+                # Some servers don't handle HEAD well — fallback to GET if necessary
+                if resp.status == 405:
+                    async with session.get(url, allow_redirects=True) as resp_get:
+                        return resp_get.status == 200
+                return resp.status == 200
+    except Exception:
+        return False
 
 
 # --------------------------
@@ -183,7 +198,7 @@ class Lookup(commands.Cog):
                     url = url.replace(
                         "/lol-game-data/assets/ASSETS/Loadouts/Companions/",
                         "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/",
-                    ).lower()
+                    )
                 else:
                     url = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
 
@@ -215,7 +230,13 @@ class Lookup(commands.Cog):
                             {"name": "End level", "value": str(level), "inline": True},
                         ]
                         embed["fields"] = embed_fields
-                        embed["thumbnail"] = {"url": url}
+
+                        if await url_exists(url):
+                            embed["thumbnail"] = {"url": url}
+                        else:
+                            fallback = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+                            embed["thumbnail"] = {"url": fallback}
+                            print(f"Skipped invalid thumbnail URL: {url}")
 
                         await message.edit(embed=discord.Embed.from_dict(embed))
                         print("Edited message.")
@@ -243,7 +264,12 @@ class Lookup(commands.Cog):
                     )
                     embed.add_field(name="Damage dealt", value=str(damage), inline=True)
                     embed.add_field(name="End level", value=str(level), inline=True)
-                    embed.set_thumbnail(url=url)
+                    if await url_exists(url):
+                        embed.set_thumbnail(url=url)
+                    else:
+                        fallback = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+                        embed.set_thumbnail(url=fallback)
+                        print(f"Skipped invalid thumbnail URL: {url}")
 
                     msg = await channel.send(embed=embed)
                     collection_users.update_one(
