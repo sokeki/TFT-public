@@ -274,7 +274,7 @@ class Lookup(commands.Cog):
                     rank_mapping = {"III": 100, "II": 200, "I": 300}
 
                     stats = await self.bot.riot.get_league_entries(
-                        user["region"], user["riot_id"]
+                        user["region"], riot_id
                     )
 
                     for stat in stats:
@@ -285,9 +285,7 @@ class Lookup(commands.Cog):
                             str_rank = f"{stat['tier'].capitalize()} {stat['rank']} {stat['leaguePoints']}LP"
 
                     lp_diff = lp - user["lp"]
-                    collection_users.update_one(
-                        {"_id": user["riot_id"]}, {"$set": {"lp": lp}}
-                    )
+                    collection_users.update_one({"_id": riot_id}, {"$set": {"lp": lp}})
 
                     desc = f"Currently {str_rank}, {lp_diff}LP"
 
@@ -306,7 +304,7 @@ class Lookup(commands.Cog):
                         print(f"Skipped invalid thumbnail URL: {url}")
 
                     collection_users.update_one(
-                        {"_id": user["riot_id"]}, {"$set": {"last_message": ""}}
+                        {"_id": riot_id}, {"$set": {"last_message": ""}}
                     )
                     print("Printed message.")
 
