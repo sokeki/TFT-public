@@ -24,7 +24,8 @@ class Add(commands.Cog):
         users = pd.DataFrame(collection.find())
 
         try:
-            summoner = await self.bot.riot.get_summoner(region, name)
+            region2 = "europe" if region == "euw1" else "americas"
+            summoner = await self.bot.riot.get_summoner(region2, tag, name)
             riot_id = summoner["puuid"]
         except Exception:
             await ctx.respond(

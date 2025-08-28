@@ -140,12 +140,11 @@ class Lookup(commands.Cog):
             except Exception:
                 continue
 
-            # Ensure a collection exists for user matches
             user_coll = dbname[riot_id]
 
             for match_id in match_ids:
                 if user_coll.find_one({"match_id": match_id}):
-                    continue  # Skip already tracked matches
+                    continue
 
                 try:
                     match_data = await self.bot.riot.get_match(region, match_id)
@@ -178,7 +177,17 @@ class Lookup(commands.Cog):
                     }
                 )
 
-                # Update Discord message embed if exists
+                tactician = companions_df[companions_df["itemId"] == tactician_id]
+                if not tactician.empty:
+                    url = tactician.iloc[0]["loadoutsIcon"]
+                    url = url.replace(
+                        "/lol-game-data/assets/ASSETS/Loadouts/Companions/",
+                        "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/",
+                    ).lower()
+                else:
+                    url = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+
+                # If a last message exists -> edit it
                 if last_msg_id:
                     try:
                         message = await channel.fetch_message(int(last_msg_id))
@@ -205,29 +214,38 @@ class Lookup(commands.Cog):
                             {"name": "End level", "value": str(level), "inline": True},
                         ]
                         embed["fields"] = embed_fields
-
-                        # Update tactician thumbnail
-                        tactician = companions_df[
-                            companions_df["itemId"] == tactician_id
-                        ]
-                        if not tactician.empty:
-                            url = tactician.iloc[0]["loadoutsIcon"]
-                            url = url.replace(
-                                "/lol-game-data/assets/ASSETS/Loadouts/Companions/",
-                                "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/loadouts/companions/",
-                            ).lower()
-                        else:
-                            url = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
-
                         embed["thumbnail"] = {"url": url}
+
                         await message.edit(embed=discord.Embed.from_dict(embed))
 
-                        # Reset last_message
                         collection_users.update_one(
                             {"_id": riot_id}, {"$set": {"last_message": ""}}
                         )
                     except Exception:
                         continue
+
+                # ELSE: send a brand new message
+                else:
+                    color = (
+                        discord.Colour.green()
+                        if placement < 5
+                        else discord.Colour.red()
+                    )
+                    title = f"{user['name']} has just {'won' if placement < 5 else 'lost'} a game"
+                    desc = f"Placement: {placement}"
+
+                    embed = discord.Embed(title=title, description=desc, color=color)
+                    embed.add_field(
+                        name="Players killed", value=str(eliminations), inline=True
+                    )
+                    embed.add_field(name="Damage dealt", value=str(damage), inline=True)
+                    embed.add_field(name="End level", value=str(level), inline=True)
+                    embed.set_thumbnail(url=url)
+
+                    msg = await channel.send(embed=embed)
+                    collection_users.update_one(
+                        {"_id": riot_id}, {"$set": {"last_message": str(msg.id)}}
+                    )
 
 
 def setup(bot):

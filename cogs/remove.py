@@ -14,13 +14,17 @@ class Remove(commands.Cog):
 
     @discord.slash_command(name="remove", description="Remove a tracked account")
     @option("name", description="Summoner name", required=True)
+    @option("tag", description="Tag", required=True)
     @option("region", description="Region", required=True, choices=["euw1", "na1"])
-    async def remove(self, ctx: discord.ApplicationContext, name: str, region: str):
+    async def remove(
+        self, ctx: discord.ApplicationContext, name: str, tag: str, region: str
+    ):
         collection = dbname["users"]
         users = pd.DataFrame(collection.find())
 
         try:
-            summoner = await self.bot.riot.get_summoner(region, name)
+            region2 = "europe" if region == "euw1" else "americas"
+            summoner = await self.bot.riot.get_summoner(region2, tag, name)
             riot_id = summoner["puuid"]
         except Exception:
             await ctx.respond("Could not fetch summoner. Check the name and region.")
