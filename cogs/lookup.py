@@ -306,6 +306,7 @@ class Lookup(commands.Cog):
                     collection_users.update_one(
                         {"_id": riot_id}, {"$set": {"last_message": ""}}
                     )
+                    msg = await channel.send(embed=embed)
                     print("Printed message.")
 
 
