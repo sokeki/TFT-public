@@ -227,13 +227,22 @@ class Lookup(commands.Cog):
                                 "value": str(eliminations),
                                 "inline": True,
                             },
-                            {"name": "\u200b", "value": "\u200b"},
+                            {
+                                "name": "\u200b",
+                                "value": "\u200b",
+                                "inline": True,
+                            },
                             {
                                 "name": "Damage dealt",
                                 "value": str(damage),
                                 "inline": True,
                             },
                             {"name": "End level", "value": str(level), "inline": True},
+                            {
+                                "name": "\u200b",
+                                "value": "\u200b",
+                                "inline": True,
+                            },
                         ]
                         embed["fields"] = embed_fields
 
@@ -295,9 +304,10 @@ class Lookup(commands.Cog):
                     embed.add_field(
                         name="Players killed", value=str(eliminations), inline=True
                     )
-                    embed.add_field(name="\u200b", value="\u200b")
+                    embed.add_field(name="\u200b", value="\u200b", inline=True),
                     embed.add_field(name="Damage dealt", value=str(damage), inline=True)
                     embed.add_field(name="End level", value=str(level), inline=True)
+                    embed.add_field(name="\u200b", value="\u200b", inline=True),
                     if await url_exists(url):
                         embed.set_thumbnail(url=url)
                     else:
