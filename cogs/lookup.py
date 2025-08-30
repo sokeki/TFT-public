@@ -227,6 +227,7 @@ class Lookup(commands.Cog):
                                 "value": str(eliminations),
                                 "inline": True,
                             },
+                            {"name": "\u200b", "value": "\u200b"},
                             {
                                 "name": "Damage dealt",
                                 "value": str(damage),
@@ -294,6 +295,7 @@ class Lookup(commands.Cog):
                     embed.add_field(
                         name="Players killed", value=str(eliminations), inline=True
                     )
+                    embed.add_field(name="\u200b", value="\u200b")
                     embed.add_field(name="Damage dealt", value=str(damage), inline=True)
                     embed.add_field(name="End level", value=str(level), inline=True)
                     if await url_exists(url):
