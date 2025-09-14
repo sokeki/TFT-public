@@ -170,7 +170,7 @@ class Lookup(commands.Cog):
 
                 try:
                     match_data = await self.bot.riot.get_match(region, match_id)
-                    if match_data["info"]["queue_id"] == 1100:
+                    if match_data["info"]["queue_id"] != 1100:
                         continue
                 except Exception:
                     continue
