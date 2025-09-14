@@ -44,6 +44,10 @@ class List(commands.Cog):
             3: "Gold",
             4: "Plat",
             5: "Emerald",
+            6: "Diamond",
+            7: "Master",
+            8: "Grandmaster",
+            9: "Challenger",
         }
         tier = tier_mapping.get(tier_points // 400, "Iron")
         rank_mapping = {0: "IV", 100: "III", 200: "II", 300: "I"}

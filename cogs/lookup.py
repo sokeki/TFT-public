@@ -100,12 +100,16 @@ class Lookup(commands.Cog):
             lp = 0
             str_rank = "Unranked"
             tier_mapping = {
+                "IRON": 0,
                 "BRONZE": 400,
                 "SILVER": 800,
                 "GOLD": 1200,
                 "PLATINUM": 1600,
                 "EMERALD": 2000,
                 "DIAMOND": 2400,
+                "MASTER": 2800,
+                "GRANDMASTER": 3200,
+                "CHALLENGER": 3600,
             }
             rank_mapping = {"III": 100, "II": 200, "I": 300}
 
@@ -166,7 +170,7 @@ class Lookup(commands.Cog):
 
                 try:
                     match_data = await self.bot.riot.get_match(region, match_id)
-                    if match_data["info"]["tft_game_type"] != "standard":
+                    if match_data["info"]["queue_id"] == 1100:
                         continue
                 except Exception:
                     continue
@@ -274,12 +278,16 @@ class Lookup(commands.Cog):
                     lp = 0
                     str_rank = "Unranked"
                     tier_mapping = {
+                        "IRON": 0,
                         "BRONZE": 400,
                         "SILVER": 800,
                         "GOLD": 1200,
                         "PLATINUM": 1600,
                         "EMERALD": 2000,
                         "DIAMOND": 2400,
+                        "MASTER": 2800,
+                        "GRANDMASTER": 3200,
+                        "CHALLENGER": 3600,
                     }
                     rank_mapping = {"III": 100, "II": 200, "I": 300}
 
